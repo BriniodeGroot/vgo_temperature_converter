@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Configuration;
 
 namespace View
 {
@@ -25,44 +26,24 @@ namespace View
         {
             InitializeComponent();
         }
-
     }
 
-    public class CelsiusConverter : IValueConverter
+    public class TemperatureConverter : IValueConverter
     {
+        ITemperatureScale TemperatureScale { get; set; }
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var kelvin = (double)value;
-            var celsius = kelvin - 273.15;
 
-            return celsius;
+            return this.TemperatureScale.ConvertFromKelvin(kelvin).ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var celsius = double.Parse((string)value);
-            var kelvin = celsius + 273.15;
+            var temperature = double.Parse((string)value);
 
-            return kelvin;
-        }
-    }
-
-    public class FahrenheitConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var kelvin = (double)value;
-            var fahrenheit = (kelvin - 273.15) * 9 / 5 + 32;
-
-            return fahrenheit;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var fahrenheit = double.Parse((string)value);
-            var kelvin = (fahrenheit - 32) * 5 / 9 + 273.15;
-
-            return kelvin;
+            return this.TemperatureScale.ConvertToKelvin(temperature);
         }
     }
 }
